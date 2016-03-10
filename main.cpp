@@ -16,6 +16,10 @@ public:
 		_adjacencyLists = new list<int>[numVertices];
 	}
 
+	~UndirectedGraph(){
+		delete[] _adjacencyLists;
+	}
+
 	void addEdge(int v1, int v2){
 		_adjacencyLists[v1].push_back(v2);
 		_adjacencyLists[v2].push_back(v1);
