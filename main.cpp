@@ -43,25 +43,22 @@ public:
 		traversed = vector<int>(_numVertices);
 
 		for(u = 0; u < _numVertices; u++)
-			if(d[u] == INFINITE){
+			if(d[u] == INFINITE)
 				tarjanVisit(u);
-			}
 	}
 
 	void tarjanVisit(int u){
 		int v;
 		d[u] = low[u] = visited;
 		visited++;
-
 		traversed[u] = 1;
 
 		list<int>::iterator it;
-		for(it = _adjacencyLists[u].begin(); it != _adjacencyLists[u].end(); ++it){
+		for(it = _adjacencyLists[u].begin(); it != _adjacencyLists[u].end(); it++){
 			v = (*it);
 			if(d[v] == INFINITE || traversed[v] == 1){
-				if(d[v] == INFINITE){
+				if(d[v] == INFINITE)
 					tarjanVisit(v);
-				}
 				low[u] = min(low[u], low[v]);
 			}
 		}
@@ -69,6 +66,7 @@ public:
 
 
 	void printAdjacencyLists(){
+		/* APAGA ESTE CODIGO DAQUI */
 		int i;
 		for(i = 0; i < _numVertices; i++){
 			cout << "Vertice: " << i+1 << " --> ";
