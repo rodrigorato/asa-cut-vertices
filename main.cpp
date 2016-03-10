@@ -1,14 +1,23 @@
 #include <stdio.h>
 #include <iostream>
 #include <list>
+#include <vector>
+#include <algorithm>
 
 #define INFINITE -1
 
 using namespace std;
 
 class UndirectedGraph{
+private:
 	int _numVertices;
 	list<int>* _adjacencyLists;
+
+	/* Tarjan's algorithm variables */
+	int visited;
+	vector<int> d;
+	vector<int> low;
+	vector<int> traversed;
 
 public:
 	UndirectedGraph(int numVertices){
@@ -25,6 +34,40 @@ public:
 		_adjacencyLists[v2].push_back(v1);
 	}
 
+	void tarjanTraversal(){
+		int u;
+		
+		visited = 0;
+		d = vector<int>(_numVertices, INFINITE);
+		low = vector<int>(_numVertices);
+		traversed = vector<int>(_numVertices);
+
+		for(u = 0; u < _numVertices; u++)
+			if(d[u] == INFINITE){
+				tarjanVisit(u);
+			}
+	}
+
+	void tarjanVisit(int u){
+		int v;
+		d[u] = low[u] = visited;
+		visited++;
+
+		traversed[u] = 1;
+
+		list<int>::iterator it;
+		for(it = _adjacencyLists[u].begin(); it != _adjacencyLists[u].end(); ++it){
+			v = (*it);
+			if(d[v] == INFINITE || traversed[v] == 1){
+				if(d[v] == INFINITE){
+					tarjanVisit(v);
+				}
+				low[u] = min(low[u], low[v]);
+			}
+		}
+	}
+
+
 	void printAdjacencyLists(){
 		int i;
 		for(i = 0; i < _numVertices; i++){
@@ -32,6 +75,7 @@ public:
 			for(list<int>::iterator it = _adjacencyLists[i].begin(); 
 				it != _adjacencyLists[i].end(); ++it)
 				cout << (*it)+1 << " ";
+			cout << "\t| d=" << d[i] << " low=" << low[i] << " visited=" << traversed[i];
 			cout << endl;
 		}
 
@@ -57,7 +101,7 @@ int main(){
 		graph->addEdge(vertice1, vertice2);
 	}
 
-	
+	graph->tarjanTraversal();
 	graph->printAdjacencyLists();
 
 	/* FAZ ++ NOS VERTICES DEPOIS */
