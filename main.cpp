@@ -14,6 +14,7 @@ private:
 	int _numVertices;
 	list<int>* _adjacencyLists;
 
+
 	/* Tarjan's algorithm variables */
 	int visited;
 	list<int> L;
@@ -40,13 +41,13 @@ public:
 	}
 
 	void tarjanTraversal(){
-		int u;
+		int u, m=-2,M=-2,art=0;
 		
 		visited = 0;
 		articulationPoints = list<int>();
 		artPts = vector<int>(_numVertices, 0);
 		L = list<int>();
-		d = vector<int>(_numVertices, INFINITE); /* */
+		d = vector<int>(_numVertices, INFINITE); 
 		low = vector<int>(_numVertices);
 		traversed = vector<int>(_numVertices);
 
@@ -54,26 +55,25 @@ public:
 			if(d[u] == INFINITE)
 				tarjanVisit(u);
 
+		for(u = 0; u < _numVertices; u++){
+			if(artPts[u]){
+				
+				art++;
+				if (u<m || m==-2)m=u;
+				if (u>M)M=u;
+			}
+		}
+		cout << art<< endl;
+		cout << m+1 << " " << M+1 << endl;
 
-		if(_adjacencyLists[0].size() > 1)
-			(artPts[0])++;
-
-		cout << "fundamentais:\n";
-		for(u = 0; u < _numVertices; u++)
-			if(artPts[u])
-				cout << u+1 << " ";
-		cout << "\n" << endl;
 	}
 
 	void tarjanVisit(int u){
-		int v;
+		int v, child=0;
 		d[u] = (low[u] = visited);
 		visited++;
 		traversed[u] = 1;
 		L.push_back(u);
-
-		printAdjacencyLists();
-		cout << "\n------------------------" << endl;
 
 		list<int>::iterator it;
 		for(it = _adjacencyLists[u].begin(); it != _adjacencyLists[u].end(); it++){
@@ -82,52 +82,24 @@ public:
 				if(d[v] == INFINITE){
 					tarjanVisit(v);
 					low[u] = min(low[u], low[v]);
+					if (u==0) child++;
+					if((d[u] <= low[v] && u != 0) ||(u==0 && child>1)){
+						artPts[u]++;
+					}
 				}
 				else if(traversed[v] == 1)
 					low[u] = min(low[u], d[v]);
-
-				if(d[u] <= low[v] && u != 0)
-					artPts[u]++;
-				// cout << "low[u]=" << low[u] <<" | low[v]=" << low[v] << endl;
-				//cout << "visiting " << u+1 << " and checked for " << v+1 << endl;
-				//cout << "did min" << endl;
 			}
 		}
 		if(d[u] == low[u]){
 			int j;
-			//printList(L);
-			
-			//cout << "u=" << u+1 << endl;
 			for(; (j = L.back()) != u; L.pop_back()){
-				//cout << "j=" << j+1 <<endl;
 				traversed[j] = 0;
-				//printList(L);
 			}
 			L.pop_back(); 
-			//printList(L);
 		}
 	}
-
-	void printList(list<int> l){
-		list<int>::iterator it = l.begin();
-		for(; it != l.end(); it++)
-			cout << (*it)+1 << " ";
-		cout << endl;
-	}
-
-	void printAdjacencyLists(){
-		/* APAGA ESTE CODIGO DAQUI */
-		int i;
-		for(i = 0; i < _numVertices; i++){
-			cout << "Vertice: " << i+1 << " --> ";
-			for(list<int>::iterator it = _adjacencyLists[i].begin(); 
-				it != _adjacencyLists[i].end(); ++it)
-				cout << (*it)+1 << " ";
-			cout << "\t| d=" << d[i] << " low=" << low[i] << " visited=" << traversed[i];
-			cout << endl;
-		}
-
-	}
+	
 };
 
 int main(){
@@ -150,9 +122,7 @@ int main(){
 	}
 
 	graph->tarjanTraversal();
-	graph->printAdjacencyLists();
 
-	/* FAZ ++ NOS VERTICES DEPOIS */
 
 	delete graph;
 	return 0;
