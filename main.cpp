@@ -18,6 +18,7 @@ private:
 	int visited;
 	list<int> L;
 	list<int> articulationPoints;
+	vector<int> artPts;
 	vector<int> d;
 	vector<int> low;
 	vector<int> traversed;
@@ -43,6 +44,7 @@ public:
 		
 		visited = 0;
 		articulationPoints = list<int>();
+		artPts = vector<int>(_numVertices, 0);
 		L = list<int>();
 		d = vector<int>(_numVertices, INFINITE); /* */
 		low = vector<int>(_numVertices);
@@ -54,10 +56,12 @@ public:
 
 
 		if(_adjacencyLists[0].size() > 1)
-			articulationPoints.push_back(0);
+			(artPts[0])++;
 
 		cout << "fundamentais:\n";
-		printList(articulationPoints);
+		for(u = 0; u < _numVertices; u++)
+			if(artPts[u])
+				cout << u+1 << " ";
 		cout << "\n" << endl;
 	}
 
@@ -83,7 +87,7 @@ public:
 					low[u] = min(low[u], d[v]);
 
 				if(d[u] <= low[v] && u != 0)
-					articulationPoints.push_back(u);
+					artPts[u]++;
 				// cout << "low[u]=" << low[u] <<" | low[v]=" << low[v] << endl;
 				//cout << "visiting " << u+1 << " and checked for " << v+1 << endl;
 				//cout << "did min" << endl;
