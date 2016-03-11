@@ -17,9 +17,11 @@ private:
 	/* Tarjan's algorithm variables */
 	int visited;
 	list<int> L;
+	list<int> articulationPoints;
 	vector<int> d;
 	vector<int> low;
 	vector<int> traversed;
+
 
 public:
 	UndirectedGraph(int numVertices){
@@ -40,14 +42,23 @@ public:
 		int u;
 		
 		visited = 0;
+		articulationPoints = list<int>();
 		L = list<int>();
 		d = vector<int>(_numVertices, INFINITE); /* */
-		low = vector<int>(_numVertices, 99999);
-		traversed = vector<int>(_numVertices, 0);
+		low = vector<int>(_numVertices);
+		traversed = vector<int>(_numVertices);
 
 		for(u = 0; u < _numVertices; u++)
 			if(d[u] == INFINITE)
 				tarjanVisit(u);
+
+
+		if(_adjacencyLists[0].size() > 1)
+			articulationPoints.push_back(0);
+
+		cout << "fundamentais:\n";
+		printList(articulationPoints);
+		cout << "\n" << endl;
 	}
 
 	void tarjanVisit(int u){
@@ -64,12 +75,18 @@ public:
 		for(it = _adjacencyLists[u].begin(); it != _adjacencyLists[u].end(); it++){
 			v = (*it);
 			if(d[v] == INFINITE || traversed[v] == 1){
-				if(d[v] == INFINITE)
+				if(d[v] == INFINITE){
 					tarjanVisit(v);
+					low[u] = min(low[u], low[v]);
+				}
+				else if(traversed[v] == 1)
+					low[u] = min(low[u], d[v]);
+
+				if(d[u] <= low[v] && u != 0)
+					articulationPoints.push_back(u);
 				// cout << "low[u]=" << low[u] <<" | low[v]=" << low[v] << endl;
-				cout << "visiting " << u+1 << " and checked for " << v+1 << endl;
-				low[u] = min(low[u], low[v]);
-				cout << "did min" << endl;
+				//cout << "visiting " << u+1 << " and checked for " << v+1 << endl;
+				//cout << "did min" << endl;
 			}
 		}
 		if(d[u] == low[u]){
