@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <list>
+#include <queue>
 #include <vector>
 #include <algorithm>
 
@@ -15,6 +16,7 @@ private:
 
 	/* Tarjan's algorithm variables */
 	int visited;
+	list<int> L;
 	vector<int> d;
 	vector<int> low;
 	vector<int> traversed;
@@ -38,9 +40,10 @@ public:
 		int u;
 		
 		visited = 0;
-		d = vector<int>(_numVertices, INFINITE);
-		low = vector<int>(_numVertices);
-		traversed = vector<int>(_numVertices);
+		L = list<int>();
+		d = vector<int>(_numVertices, INFINITE); /* */
+		low = vector<int>(_numVertices, 99999);
+		traversed = vector<int>(_numVertices, 0);
 
 		for(u = 0; u < _numVertices; u++)
 			if(d[u] == INFINITE)
@@ -49,9 +52,13 @@ public:
 
 	void tarjanVisit(int u){
 		int v;
-		d[u] = low[u] = visited;
+		d[u] = (low[u] = visited);
 		visited++;
 		traversed[u] = 1;
+		L.push_back(u);
+
+		printAdjacencyLists();
+		cout << "\n------------------------" << endl;
 
 		list<int>::iterator it;
 		for(it = _adjacencyLists[u].begin(); it != _adjacencyLists[u].end(); it++){
@@ -59,11 +66,33 @@ public:
 			if(d[v] == INFINITE || traversed[v] == 1){
 				if(d[v] == INFINITE)
 					tarjanVisit(v);
+				// cout << "low[u]=" << low[u] <<" | low[v]=" << low[v] << endl;
+				cout << "visiting " << u+1 << " and checked for " << v+1 << endl;
 				low[u] = min(low[u], low[v]);
+				cout << "did min" << endl;
 			}
+		}
+		if(d[u] == low[u]){
+			int j;
+			//printList(L);
+			
+			//cout << "u=" << u+1 << endl;
+			for(; (j = L.back()) != u; L.pop_back()){
+				//cout << "j=" << j+1 <<endl;
+				traversed[j] = 0;
+				//printList(L);
+			}
+			L.pop_back(); 
+			//printList(L);
 		}
 	}
 
+	void printList(list<int> l){
+		list<int>::iterator it = l.begin();
+		for(; it != l.end(); it++)
+			cout << (*it)+1 << " ";
+		cout << endl;
+	}
 
 	void printAdjacencyLists(){
 		/* APAGA ESTE CODIGO DAQUI */
